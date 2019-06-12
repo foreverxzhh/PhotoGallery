@@ -41,7 +41,6 @@ public class ThumbnailDownloader<T> extends HandlerThread {
     }
 
     public void queueThumbnail(T target, String url) {
-        Log.d("haha", "Got a URL:" + url);
 
         if (url == null) {
             mRequestMap.remove(target);

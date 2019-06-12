@@ -70,7 +70,6 @@ public class FlickrFetchr {
         List<GalleryItem> items = new ArrayList<>();
         try {
             String jsonString = getUrlString(url);
-            Log.d("haha", jsonString);
             JSONObject jsonBody = new JSONObject(jsonString);
             parseItems(items, jsonBody);
         } catch (IOException e) {

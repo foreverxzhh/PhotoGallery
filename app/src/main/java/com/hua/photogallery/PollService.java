@@ -1,5 +1,6 @@
 package com.hua.photogallery;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.Notification;
@@ -12,8 +13,6 @@ import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.SystemClock;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
 import java.util.List;
@@ -30,6 +29,14 @@ public class PollService extends IntentService {
 
     private static final long POLL_INTERVAL_MS = TimeUnit.MINUTES.toMillis(1);
 
+    public static final String ACTION_SHOW_NOTIFICATION = "com.hua.android.photogallery.SHOW_NOTIFICATION";
+
+    public static final String PERM_PRIVATE = "com.hua.android.photogallery.PRIVATE";
+
+    public static final String REQUEST_CODE = "REQUEST_CODE";
+
+    public static final String NOTIFICATION = "NOTIFICATION";
+
     public static Intent newIntent(Context context) {
         return new Intent(context, PollService.class);
     }
@@ -45,6 +52,8 @@ public class PollService extends IntentService {
             alarmManager.cancel(pi);
             pi.cancel();
         }
+
+        QueryPreferences.setAlarmOn(context, isOn);
     }
 
     public static boolean isServiceAlarmOn(Context context) {
@@ -59,7 +68,7 @@ public class PollService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.d("haha", "onHandleIntent");
+        Log.d("hua", "onHandleIntent");
         if (!isNetworkAvailableAndConnected()) {
             return;
         }
@@ -80,9 +89,9 @@ public class PollService extends IntentService {
 
         String resultId = items.get(0).getId();
         if (resultId.equals(lastResultId)) {
-            Log.d("haha", "onHandleIntent-if");
+            Log.d("hua", "onHandleIntent-if");
         } else {
-            Log.d("haha", "onHandleIntent-else");
+            Log.d("hua", "onHandleIntent-else");
 
             String CHANNEL_ID = "channel_1";
             Resources resources = getResources();
@@ -116,8 +125,12 @@ public class PollService extends IntentService {
                         .setAutoCancel(true);
             }
 
-            mNotificationManager.notify(0, builder.build());
+            Notification notification = builder.build();
 
+            Intent mIntent = new Intent(ACTION_SHOW_NOTIFICATION);
+            mIntent.putExtra(REQUEST_CODE, 0);
+            mIntent.putExtra(NOTIFICATION, notification);
+            sendOrderedBroadcast(mIntent, PERM_PRIVATE, null, null, Activity.RESULT_OK, null, null);
         }
         QueryPreferences.setLastResultId(this, resultId);
     }
