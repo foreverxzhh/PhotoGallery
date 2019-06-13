@@ -1,5 +1,6 @@
 package com.hua.photogallery;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -180,9 +181,17 @@ public class PhotoGalleryFragment extends VisibleFragment {
 
         @Override
         public void onBindViewHolder(PhotoHolder photoHolder, int i) {
-            GalleryItem galleryItem = mGalleryItems.get(i);
+            final GalleryItem galleryItem = mGalleryItems.get(i);
             photoHolder.mItemImageView.setImageDrawable(getResources().getDrawable(R.drawable.bill_up_close));
             mThumbnailDownloader.queueThumbnail(photoHolder, galleryItem.getUrl());
+            photoHolder.mItemImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Intent i = new Intent(Intent.ACTION_VIEW, galleryItem.getPhotoPageUri());
+                    Intent i = PhotoPageActivity.newIntent(getActivity(), galleryItem.getPhotoPageUri());
+                    startActivity(i);
+                }
+            });
         }
 
         @Override
